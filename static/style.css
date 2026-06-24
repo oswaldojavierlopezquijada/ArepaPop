@@ -1,12 +1,12 @@
-/* Ajustes Globais */
 :root {
-    --azul-predominante: #0033a0;
-    --verde-brasil: #009b3a;
-    --amarelo-uniao: #fecb00;
-    --vermelho-venezuela: #cf142b;
-    --fundo-branco: #ffffff;
-    --fundo-cinza-claro: #f8f9fa;
-    --texto-escuro: #212529;
+    /* Paleta de cores moderna (Soft Colors) */
+    --fundo-pagina: #f4f7f6;
+    --fundo-card: #ffffff;
+    --texto-principal: #2d3436;
+    --texto-secundario: #636e72;
+    --accent: #0984e3; /* Azul suave para ações */
+    --accent-hover: #74b9ff;
+    --borda: #dfe6e9;
 }
 
 * {
@@ -16,42 +16,54 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--fundo-branco);
-    color: var(--texto-escuro);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--fundo-pagina);
+    color: var(--texto-principal);
+    line-height: 1.6;
+    padding: 20px;
 }
 
-/* Tabelas (Para as páginas de produtos e pedidos) */
+/* Tabelas Minimalistas */
 table {
     width: 100%;
-    border-collapse: collapse;
-    background: var(--fundo-branco);
-    border-radius: 8px;
-    overflow: hidden;
+    border-collapse: separate; /* Permite bordas arredondadas */
+    border-spacing: 0;
+    background: var(--fundo-card);
+    border-radius: 12px;
     margin-top: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    border: 1px solid var(--borda);
+    overflow: hidden;
 }
 
 th {
-    background-color: var(--azul-predominante);
-    color: white;
-    padding: 0.75rem 1rem;
-    text-align: left;
+    background-color: #fcfcfc; /* Quase branco */
+    color: var(--texto-secundario);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--borda);
 }
 
 td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #dee2e6;
+    padding: 1rem;
+    border-bottom: 1px solid #f1f2f6;
 }
 
-/* Badges de Status */
-.badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: bold;
+/* Efeito de hover na linha da tabela */
+tr:hover {
+    background-color: #f9fbfd;
 }
-.badge.verde { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.badge.amarelo { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-.badge.vermelho { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+/* Badges Modernos (Sem bordas agressivas) */
+.badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.badge.verde { background: #e8f5e9; color: #2e7d32; }
+.badge.amarelo { background: #fffde7; color: #f9a825; }
+.badge.vermelho { background: #ffebee; color: #c62828; }
