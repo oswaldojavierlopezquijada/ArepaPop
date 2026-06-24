@@ -1,11 +1,38 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from banco import conectar, criar_tabelas
 from datetime import datetime
+import os
 
 app = Flask(__name__)
+# A secret_key é obrigatória para usar session em Flask
+app.secret_key = "arepapop_secreto_123"
 
 # Cria as tabelas no banco de dados ao iniciar a aplicação
 criar_tabelas()
+
+# ---------------------------------------------------------
+# SISTEMA DE AUTENTICAÇÃO (SESSÃO ADM)
+# ---------------------------------------------------------
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    erro = None
+    if request.method == "POST":
+        usuario = request.form["usuario"]
+        senha = request.form["senha"]
+        
+        # Usuário e senha fixos para o Administrador da Cantina
+        if usuario == "admin" and senha == "arepa123":
+            session["admin"] = True
+            return redirect(url_for('index'))
+        else:
+            erro = "Usuário ou senha incorretos!"
+            
+    return render_template("login.html", erro=erro)
+
+@app.route("/logout")
+def logout():
+    session.pop("admin", None)
+    return redirect(url_for('index'))
 
 # ---------------------------------------------------------
 # PASSO 1 — Página Inicial (Dashboard)
@@ -46,10 +73,14 @@ def listar_produtos():
     return render_template("produtos.html", produtos=produtos)
 
 # ---------------------------------------------------------
-# PASSO 3 — Cadastrar Produto
+# PASSO 3 — Cadastrar Produto (PROTEGIDO)
 # ---------------------------------------------------------
 @app.route("/cadastrar-produto", methods=["GET", "POST"])
 def cadastrar_produto():
+    # SE NÃO FOR ADMIN, BLOQUEIA O ACESSO
+    if not session.get("admin"):
+        return redirect(url_for('login'))
+
     if request.method == "POST":
         nome    = request.form["nome"]
         preco   = float(request.form["preco"])
@@ -162,11 +193,9 @@ def ranking():
     return render_template("ranking.html", ranking=ranking_vendas)
 
 # ---------------------------------------------------------
-# Inicialização do Servidor Local
+# Inicialização do Servidor
 # ---------------------------------------------------------
-
 if __name__ == "__main__":
-    import os
     # O Render define automaticamente uma porta nas variáveis de ambiente
     porta = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=porta)
