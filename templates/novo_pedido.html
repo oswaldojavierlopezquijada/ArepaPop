@@ -1,152 +1,96 @@
 {% extends "base.html" %}
 
-{% block conteudo %}
-<style>
-    /* Estilos específicos para a página de Novo Pedido */
-    .pedido-header {
-        margin-bottom: 2rem;
-        border-bottom: 2px solid #eaedf1;
-        padding-bottom: 1rem;
-    }
+{% block title %}Novo Pedido{% endblock %}
 
-    .pedido-header h1 {
-        color: var(--azul-predominante);
-        font-size: 2rem;
-        margin: 0;
-    }
+{% block content %}
+<div class="page-wrapper">
 
-    .pedido-container {
-        max-width: 550px;
-        background-color: var(--fundo-branco);
-        padding: 2.5rem;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
+  <!-- Cabeçalho da Página -->
+  <div class="page-header">
+    <div>
+      <h2>➕ Registrar Novo Pedido</h2>
+      <p>Selecione o produto e a quantidade para realizar uma nova venda.</p>
+    </div>
+    <div>
+      <a href="/pedidos" class="btn btn-secondary">
+        📋 Histórico de Pedidos
+      </a>
+    </div>
+  </div>
 
-    .pedido-group {
-        margin-bottom: 1.25rem;
-    }
+  <!-- Exibição de Erro (Ex: Estoque Insuficiente) -->
+  {% if erro %}
+  <div class="alert-box mb-3" style="max-width: 600px; margin: 0 auto 1.5rem;">
+    <div>
+      <h3>⚠️ Alerta de Sistema</h3>
+      <p><strong>{{ erro }}</strong></p>
+    </div>
+  </div>
+  {% endif %}
 
-    .pedido-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #4a5568;
-        font-size: 0.95rem;
-    }
-
-    .pedido-group select, .pedido-group input {
-        width: 100%;
-        padding: 0.65rem 0.75rem;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        font-size: 1rem;
-        color: var(--texto-escuro);
-        background-color: #f8fafc;
-        transition: border-color 0.2s ease, background-color 0.2s ease;
-        box-sizing: border-box;
-    }
-
-    .pedido-group select:focus, .pedido-group input:focus {
-        outline: none;
-        border-color: var(--azul-predominante);
-        background-color: var(--fundo-branco);
-        box-shadow: 0 0 0 3px rgba(0, 51, 160, 0.15);
-    }
-
-    .pedido-actions {
-        margin-top: 2rem;
-        display: flex;
-        gap: 1rem;
-    }
-
-    /* Botão Confirmar usando o azul predominante */
-    .btn-confirmar {
-        background-color: var(--azul-predominante);
-        color: var(--fundo-branco);
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 6px;
-        font-weight: bold;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s ease, border-color 0.2s ease;
-        flex: 2;
-    }
-
-    .btn-confirmar:hover {
-        background-color: #002266;
-        border-bottom: 3px solid var(--verde-brasil); /* Detalhe verde no hover */
-    }
-
-    .btn-cancelar {
-        background-color: #e2e8f0;
-        color: #475569;
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 6px;
-        font-weight: bold;
-        font-size: 1rem;
-        text-align: center;
-        text-decoration: none;
-        transition: background-color 0.2s ease;
-        flex: 1;
-    }
-
-    .btn-cancelar:hover {
-        background-color: #cbd5e1;
-        color: #1e293b;
-    }
-
-    /* Caixa de Erro Dinâmica (Estoque Insuficiente) */
-    .caixa-erro {
-        background-color: #fff5f5;
-        color: var(--vermelho-venezuela);
-        border: 1px solid #fed7d7;
-        border-left: 5px solid var(--vermelho-venezuela);
-        padding: 1rem;
-        border-radius: 6px;
-        margin-bottom: 1.5rem;
-        font-weight: 500;
-    }
-</style>
-
-<div class="pedido-header">
-    <h1>🛒 Registrar Novo Pedido</h1>
-</div>
-
-<div class="pedido-container">
+  <!-- Formulário em estilo Glass Card -->
+  <div class="card" style="max-width: 600px; margin: 0 auto;">
     
-    {% if erro %}
-        <div class="caixa-erro">
-            ⚠️ {{ erro }}
-        </div>
-    {% endif %}
+    {% if not produtos %}
+    <div class="empty-state" style="padding: 2rem 0;">
+      <span class="empty-icon">🫓</span>
+      <p>Não há produtos com estoque disponível no momento.</p>
+      {% if session.get('admin') %}
+        <a href="/cadastrar-produto" class="btn btn-primary mt-2">Abastecer Estoque</a>
+      {% endif %}
+    </div>
+    {% else %}
 
     <form action="{{ url_for('novo_pedido') }}" method="POST">
-        
-        <div class="pedido-group">
-            <label for="produto_id">Selecione o Produto:</label>
-            <select id="produto_id" name="produto_id" required>
-                <option value="" disabled selected>-- Escolha um item da lista --</option>
-                {% for p in produtos %}
-                    <option value="{{ p[0] }}">{{ p[1] }} (Disponível: {{ p[2] }} un.)</option>
-                {% endfor %}
-            </select>
-        </div>
+      
+      <!-- Campo: Seleção do Produto -->
+      <div class="form-group">
+        <label for="produto_id" class="form-label">Selecione o Produto</label>
+        <select id="produto_id" name="produto_id" class="form-control" required>
+          <option value="" disabled selected>-- Escolha um item do cardápio --</option>
+          {% for prod in produtos %}
+            <!-- prod[0] = id, prod[1] = nome, prod[2] = estoque -->
+            <option value="{{ prod[0] }}">
+              {{ prod[1] }} (Disponível: {{ prod[2] }} un)
+            </option>
+          {% endfor %}
+        </select>
+      </div>
 
-        <div class="pedido-group">
-            <label for="quantidade">Quantidade:</label>
-            <input type="number" id="quantidade" name="quantidade" min="1" value="1" required>
-        </div>
+      <!-- Campo: Quantidade -->
+      <div class="form-group">
+        <label for="quantidade" class="form-label">Quantidade</label>
+        <input 
+          type="number" 
+          id="quantidade" 
+          name="quantidade" 
+          class="form-control" 
+          placeholder="Ex: 2" 
+          min="1" 
+          value="1"
+          required
+        />
+      </div>
 
-        <div class="pedido-actions">
-            <a href="{{ url_for('listar_pedidos') }}" class="btn-cancelar">Cancelar</a>
-            <button type="submit" class="btn-confirmar">Finalizar Pedido</button>
-        </div>
+      <!-- Linha Divisória Decorativa -->
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-txt">ArepaPop Caixa</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Botões de Ação -->
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; align-items: center;">
+        <a href="/" class="text-muted" style="text-decoration: none; font-size: 0.85rem;">Cancelar</a>
+        <button type="submit" class="btn btn-primary">
+          🛒 Confirmar Pedido
+        </button>
+      </div>
 
     </form>
-</div>
+    {% endif %}
 
+  </div>
+
+</div>
 {% endblock %}

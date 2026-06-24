@@ -1,166 +1,456 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍔 Cantina Digital</title>
-    <style>
-        /* Paleta de Cores Fusaço Brasil + Venezuela */
-        :root {
-            --azul-predominante: #0033a0; /* Azul predominante */
-            --verde-brasil: #009b3a;      /* Verde detalhe */
-            --amarelo-uniao: #fecb00;     /* Amarelo detalhe */
-            --vermelho-venezuela: #cf142b;/* Vermelho alertas */
-            --fundo-branco: #ffffff;
-            --fundo-cinza-claro: #f8f9fa;
-            --texto-escuro: #212529;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}ArepaPop{% endblock %} — ArepaPop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    /* ── BASE ── */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0A1628;
+      color: #E8F0FE;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--fundo-branco);
-            color: var(--texto-escuro);
-        }
+    /* ── BG GRADIENTS ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 15%  0%,  rgba(192,57,43,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 45% at 85% 90%,  rgba(26,82,118,0.28) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 35% at 70% 20%,  rgba(39,174,96,0.13) 0%, transparent 50%);
+    }
+    /* losango sutil inspirado na bandeira venezuelana */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.035;
+      background-image:
+        repeating-linear-gradient( 45deg, #fff 0, #fff 1px, transparent 1px, transparent 32px),
+        repeating-linear-gradient(-45deg, #fff 0, #fff 1px, transparent 1px, transparent 32px);
+    }
 
-        /* Navbar Azul */
-        nav {
-            background-color: var(--azul-predominante);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-bottom: 4px solid var(--amarelo-uniao);
-        }
+    /* ── NAVBAR ── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(10,22,40,0.84);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+    }
 
-        nav .logo {
-            color: var(--fundo-branco);
-            font-size: 1.4rem;
-            font-weight: bold;
-            text-decoration: none;
-        }
+    /* Logo */
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: #E8F0FE;
+      font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #C0392B, #F39C12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 20px rgba(192,57,43,0.5);
+      transition: box-shadow 0.2s;
+    }
+    .nav-logo:hover .logo-icon { box-shadow: 0 0 28px rgba(243,156,18,0.6); }
+    .logo-text em { color: #F39C12; font-style: normal; }
 
-        nav .nav-links {
-            display: flex;
-            align-items: center;
-        }
+    /* Links */
+    .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; font-weight: 600; padding: 7px 13px; border-radius: 8px;
+      color: rgba(200,220,240,0.6); text-decoration: none;
+      display: flex; align-items: center; gap: 5px;
+      transition: all 0.18s; white-space: nowrap;
+    }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .nav-links li.active a {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(192,57,43,0.38), rgba(243,156,18,0.18));
+      border: 1px solid rgba(192,57,43,0.38);
+    }
+    .nav-links li.logout a { color: rgba(231,76,60,0.8); }
+    .nav-links li.logout a:hover { background: rgba(231,76,60,0.15); color: #ff8070; }
 
-        nav .nav-links a {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            margin-left: 1.5rem;
-            font-weight: 500;
-            padding: 0.5rem 0.75rem;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
+    /* Hamburger (mobile) */
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 6px; border: none; background: none;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: rgba(200,220,240,0.7); border-radius: 2px;
+      transition: all 0.25s;
+    }
 
-        nav .nav-links a:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
+    /* Mobile drawer */
+    .nav-drawer {
+      display: none; flex-direction: column;
+      background: rgba(10,22,40,0.97);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 12px 1.5rem 16px;
+    }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a {
+      font-size: 0.88rem; font-weight: 600; padding: 10px 12px; border-radius: 8px;
+      color: rgba(200,220,240,0.7); text-decoration: none;
+      display: flex; align-items: center; gap: 8px;
+      transition: all 0.18s;
+    }
+    .nav-drawer a:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .nav-drawer a.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(192,57,43,0.35), rgba(243,156,18,0.15));
+    }
+    .nav-drawer a.logout { color: rgba(231,76,60,0.8); }
 
-        /* Container Principal */
-        .container {
-            max-width: 1000px;
-            margin: 3rem auto;
-            padding: 0 1.5rem;
-        }
+    /* ── FLASH MESSAGES ── */
+    .flashes {
+      position: relative; z-index: 10;
+      max-width: 1200px; margin: 1.2rem auto 0; padding: 0 2rem;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .flash {
+      padding: 12px 18px; border-radius: 12px;
+      font-size: 0.87rem; font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .flash.success { background: rgba(39,174,96,0.15);  border: 1px solid rgba(39,174,96,0.3);  color: #2ECC71; }
+    .flash.error   { background: rgba(192,57,43,0.15);  border: 1px solid rgba(192,57,43,0.3);  color: #E74C3C; }
+    .flash.info    { background: rgba(26,82,118,0.15);  border: 1px solid rgba(52,152,219,0.3); color: #5DADE2; }
+    .flash.warning { background: rgba(243,156,18,0.12); border: 1px solid rgba(243,156,18,0.3); color: #F39C12; }
+    .flash-close {
+      margin-left: auto; cursor: pointer; background: none; border: none;
+      color: inherit; font-size: 1rem; opacity: 0.6; line-height: 1;
+      transition: opacity 0.15s;
+    }
+    .flash-close:hover { opacity: 1; }
 
-        /* Tabelas Estilizadas */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--fundo-branco);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-        }
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      padding: 2.5rem 2rem 3rem;
+    }
 
-        th {
-            background-color: var(--azul-predominante);
-            color: white;
-            padding: 0.75rem 1rem;
-            text-align: left;
-        }
+    /* ── PAGE HEADER (bloco reutilizável) ── */
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .page-header h2 {
+      font-family: 'Montserrat', sans-serif; font-weight: 900;
+      font-size: 1.75rem; letter-spacing: -0.5px;
+    }
+    .page-header p { font-size: 0.88rem; color: rgba(180,210,240,0.6); margin-top: 4px; }
 
-        td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
+    /* ── GLASS CARD ── */
+    .card {
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 1.6rem 1.8rem;
+    }
 
-        /* Badges de Inventário */
-        .badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .badge.verde { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .badge.amarelo { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .badge.vermelho { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
+      padding: 9px 18px; border-radius: 10px; border: none;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #C0392B, #E74C3C);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(192,57,43,0.35);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #E74C3C, #F39C12);
+      box-shadow: 0 6px 22px rgba(192,57,43,0.5);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: rgba(200,220,240,0.85);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border-color: rgba(255,255,255,0.22);
+    }
+    .btn-danger {
+      background: rgba(192,57,43,0.18);
+      color: #E74C3C;
+      border: 1px solid rgba(192,57,43,0.3);
+    }
+    .btn-danger:hover { background: rgba(192,57,43,0.3); }
 
-        footer {
-            text-align: center;
-            padding: 2rem;
-            margin-top: 5rem;
-            font-size: 0.9rem;
-            color: #6c757d;
-            border-top: 1px solid #dee2e6;
-            background-color: var(--fundo-cinza-claro);
-        }
+    /* ── FORMS ── */
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label {
+      display: block; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.5px; color: rgba(180,210,240,0.7);
+      margin-bottom: 6px; text-transform: uppercase;
+    }
+    .form-control {
+      width: 100%; padding: 10px 14px; border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #E8F0FE; font-family: 'Inter', sans-serif; font-size: 0.9rem;
+      transition: border-color 0.18s, background 0.18s;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: rgba(243,156,18,0.5);
+      background: rgba(255,255,255,0.09);
+    }
+    .form-control::placeholder { color: rgba(180,210,240,0.3); }
+    select.form-control option { background: #0D1B2A; color: #E8F0FE; }
 
-        .bandeira-detalhe {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin: 0 2px;
-        }
-    </style>
+    /* ── TABLE ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    thead tr {
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    thead th {
+      padding: 13px 16px; text-align: left;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; color: rgba(180,210,240,0.5);
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.04); }
+    tbody td { padding: 13px 16px; color: rgba(220,235,250,0.85); }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block; font-size: 0.7rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.3px;
+    }
+    .badge-red    { background: rgba(192,57,43,0.25); color: #E74C3C; border: 1px solid rgba(192,57,43,0.3); }
+    .badge-green  { background: rgba(39,174,96,0.2);  color: #2ECC71; border: 1px solid rgba(39,174,96,0.3); }
+    .badge-blue   { background: rgba(52,152,219,0.2); color: #5DADE2; border: 1px solid rgba(52,152,219,0.3); }
+    .badge-gold   { background: rgba(243,156,18,0.2); color: #F39C12; border: 1px solid rgba(243,156,18,0.3); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex; align-items: center; gap: 14px;
+      margin: 1.5rem 0; opacity: 0.4;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.12); }
+    .divider-txt {
+      font-size: 0.65rem; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(200,220,240,0.6);
+    }
+
+    /* ── ALERT BOX ── */
+    .alert-box {
+      background: rgba(192,57,43,0.11);
+      border: 1px solid rgba(192,57,43,0.32);
+      border-radius: 16px; padding: 14px 18px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .alert-box h3 {
+      font-family: 'Montserrat', sans-serif; font-weight: 700;
+      font-size: 0.88rem; color: #E74C3C; margin-bottom: 4px;
+    }
+    .alert-box p, .alert-box li { font-size: 0.84rem; color: rgba(200,210,220,0.75); }
+    .alert-box ul { list-style: none; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 4rem 2rem;
+      color: rgba(180,210,240,0.4);
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 1.2rem 2rem; margin-top: auto;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px;
+    }
+    footer p { font-size: 0.75rem; color: rgba(180,210,240,0.35); }
+    .footer-flags { font-size: 0.78rem; color: rgba(180,210,240,0.38); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .page-wrapper { padding: 1.5rem 1rem 2rem; }
+      .page-header { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ── UTIL ── */
+    .text-muted { color: rgba(180,210,240,0.5); }
+    .text-gold  { color: #F39C12; }
+    .text-red   { color: #E74C3C; }
+    .text-green { color: #2ECC71; }
+    .text-blue  { color: #5DADE2; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    .mt-4 { margin-top: 2rem; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .mb-3 { margin-bottom: 1.5rem; }
+    .mb-4 { margin-bottom: 2rem; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 1rem; }
+
+    {% block extra_styles %}{% endblock %}
+  </style>
 </head>
 <body>
 
-    <nav>
-        <a href="{{ url_for('index') }}" class="logo">🍔 Cantina Digital</a>
-        <div class="nav-links">
-            <a href="{{ url_for('index') }}">🏠 Início</a>
-            <a href="{{ url_for('listar_produtos') }}">🛒 Produtos</a>
-            <a href="{{ url_for('novo_pedido') }}">➕ Novo Pedido</a>
-            <a href="{{ url_for('listar_pedidos') }}">📋 Pedidos</a>
-            <a href="{{ url_for('ranking') }}">📊 Ranking</a>
-            <a href="{{ url_for('contato') }}">💬 Contato</a>
-            
-            {% if session.get('admin') %}
-                <a href="{{ url_for('logout') }}" style="color: #ff4d4d; font-weight: bold;">❌ Sair (ADM)</a>
-            {% else %}
-                <a href="{{ url_for('login') }}" style="color: #4ade80; font-weight: bold;">🔐 Entrar</a>
-            {% endif %}
-        </div>
-    </nav>
+<!-- ═══ NAVBAR ═══ -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">🫓</div>
+      <span class="logo-text">Arepa<em>Pop</em></span>
+    </a>
 
-    <div class="container">
-        {% block conteudo %}
-        {% endblock %}
+    <!-- Menu de Navegação para Desktop -->
+    <ul class="nav-links">
+      <li class="{% if request.endpoint == 'index' %}active{% endif %}">
+        <a href="/">🏠 Início</a>
+      </li>
+      <li class="{% if request.endpoint == 'listar_produtos' %}active{% endif %}">
+        <a href="/produtos">🛒 Produtos</a>
+      </li>
+      <li class="{% if request.endpoint == 'novo_pedido' %}active{% endif %}">
+        <a href="/novo-pedido">➕ Novo Pedido</a>
+      </li>
+      <li class="{% if request.endpoint == 'listar_pedidos' %}active{% endif %}">
+        <a href="/pedidos">📋 Pedidos</a>
+      </li>
+      <li class="{% if request.endpoint == 'ranking' %}active{% endif %}">
+        <a href="/ranking">📊 Ranking</a>
+      </li>
+      <li class="{% if request.endpoint == 'contato' %}active{% endif %}">
+        <a href="/contato">💬 Contato</a>
+      </li>
+      
+      <!-- Verificação Condicional do Menu Desktop -->
+      {% if session.get('admin') %}
+      <li class="logout">
+        <a href="/logout">✕ Sair</a>
+      </li>
+      {% else %}
+      <li>
+        <a href="/login">🔑 Login</a>
+      </li>
+      {% endif %}
+    </ul>
+
+    <!-- Botão Hamburger (Apenas em Mobile/Telas menores) -->
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile drawer (Menu Lateral Corrigido) -->
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="/"           class="{% if request.endpoint == 'index' %}active{% endif %}">🏠 Início</a>
+    <a href="/produtos"  class="{% if request.endpoint == 'listar_produtos' %}active{% endif %}">🛒 Produtos</a>
+    <a href="/novo-pedido" class="{% if request.endpoint == 'novo_pedido' %}active{% endif %}">➕ Novo Pedido</a>
+    <a href="/pedidos"   class="{% if request.endpoint == 'listar_pedidos' %}active{% endif %}">📋 Pedidos</a>
+    <a href="/ranking"   class="{% if request.endpoint == 'ranking' %}active{% endif %}">📊 Ranking</a>
+    <a href="/contato"   class="{% if request.endpoint == 'contato' %}active{% endif %}">💬 Contato</a>
+    
+    <!-- Correção Aplicada: Condicional para o Menu Mobile -->
+    {% if session.get('admin') %}
+      <a href="/logout" class="logout">✕ Sair</a>
+    {% else %}
+      <a href="/login">🔑 Login</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- ═══ FLASH MESSAGES ═══ -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flashes">
+    {% for category, message in messages %}
+    <div class="flash {{ category }}">
+      {% if category == 'success' %}✅{% elif category == 'error' %}❌{% elif category == 'warning' %}⚠️{% else %}ℹ️{% endif %}
+      {{ message }}
+      <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
     </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}
 
-    <footer>
-        <p>© 2026 - Cantina Digital — Grupo 2 · Qualifica DF</p>
-        <p style="margin-top: 0.5rem;">
-            <span class="bandeira-detalhe" style="background-color: var(--amarelo-uniao);"></span>
-            <span class="bandeira-detalhe" style="background-color: var(--azul-predominante);"></span>
-            <span class="bandeira-detalhe" style="background-color: var(--vermelho-venezuela);"></span>
-            <span class="bandeira-detalhe" style="background-color: var(--verde-brasil);"></span>
-        </p>
-    </footer>
+<!-- ═══ CONTEÚDO DA PÁGINA ═══ -->
+{% block content %}{% endblock %}
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-flags">🇻🇪 × 🇧🇷 &nbsp;Sabor que atravessa fronteiras</span>
+    <p>© 2026 – ArepaPop — Grupo 2 · QualificaDF</p>
+  </div>
+</footer>
+
+<script>
+  // Hamburger toggle para abrir o menu mobile
+  const btn    = document.getElementById('hamburger');
+  const drawer = document.getElementById('nav-drawer');
+  if (btn && drawer) {
+    btn.addEventListener('click', () => {
+      drawer.classList.toggle('open');
+      const spans = btn.querySelectorAll('span');
+      const open  = drawer.classList.contains('open');
+      spans[0].style.transform = open ? 'rotate(45deg) translate(5px,5px)' : '';
+      spans[1].style.opacity   = open ? '0' : '1';
+      spans[2].style.transform = open ? 'rotate(-45deg) translate(5px,-5px)' : '';
+    });
+  }
+</script>
+
+{% block extra_scripts %}{% endblock %}
 
 </body>
 </html>

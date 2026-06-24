@@ -7,9 +7,6 @@ app = Flask(__name__)
 # A secret_key é obrigatória para usar session em Flask
 app.secret_key = "arepapop_secreto_123"
 
-# Cria as tabelas no banco de dados ao iniciar a aplicação
-criar_tabelas()
-
 # ---------------------------------------------------------
 # SISTEMA DE AUTENTICAÇÃO (SESSÃO ADM)
 # ---------------------------------------------------------
@@ -20,7 +17,6 @@ def login():
         usuario = request.form["usuario"]
         senha = request.form["senha"]
         
-        # Usuário e senha fixos para o Administrador da Cantina
         if usuario == "admin" and senha == "arepa123":
             session["admin"] = True
             return redirect(url_for('index'))
@@ -46,7 +42,6 @@ def index():
     total_pedidos  = cur.execute("SELECT COUNT(*) FROM pedidos").fetchone()[0]
     receita = cur.execute("SELECT SUM(total) FROM pedidos").fetchone()[0] or 0
 
-    # Produtos com estoque abaixo de 5 unidades
     alertas = cur.execute(
         "SELECT nome, estoque FROM produtos WHERE estoque < 5"
     ).fetchall()
@@ -77,7 +72,6 @@ def listar_produtos():
 # ---------------------------------------------------------
 @app.route("/cadastrar-produto", methods=["GET", "POST"])
 def cadastrar_produto():
-    # SE NÃO FOR ADMIN, BLOQUEIA O ACESSO
     if not session.get("admin"):
         return redirect(url_for('login'))
 
@@ -110,7 +104,6 @@ def novo_pedido():
         con = conectar()
         cur = con.cursor()
 
-        # Busca o produto para pegar preço e verificar estoque
         produto = cur.execute(
             "SELECT nome, preco, estoque FROM produtos WHERE id = ?",
             (produto_id,)
@@ -122,7 +115,6 @@ def novo_pedido():
 
         nome_prod, preco, estoque_atual = produto
 
-        # Valida se tem estoque suficiente
         if quantidade > estoque_atual:
             produtos_disponiveis = cur.execute("SELECT id, nome, estoque FROM produtos WHERE estoque > 0").fetchall()
             con.close()
@@ -131,16 +123,13 @@ def novo_pedido():
                 produtos=produtos_disponiveis
             )
 
-        # CORREÇÃO AQUI (Linha 134 limpa):
         total = preco * quantidade
         agora = datetime.now().strftime("%d/%m/%Y %H:%M")
 
-        # Registra o pedido
         cur.execute(
             "INSERT INTO pedidos (produto_id, quantidade, total, data_pedido) VALUES (?, ?, ?, ?)",
             (produto_id, quantidade, total, agora)
         )
-        # Desconta do estoque
         cur.execute(
             "UPDATE produtos SET estoque = estoque - ? WHERE id = ?",
             (quantidade, produto_id)
@@ -149,7 +138,6 @@ def novo_pedido():
         con.close()
         return redirect(url_for("listar_pedidos"))
 
-    # GET: lista só produtos com estoque > 0
     con = conectar()
     cur = con.cursor()
     produtos = cur.execute(
@@ -207,7 +195,6 @@ def contato():
         mensagem = request.form["mensagem"]
         agora = datetime.now().strftime("%d/%m/%Y %H:%M")
 
-        # Insere o comentário no banco de dados
         cur.execute(
             "INSERT INTO comentarios (nome, email, mensagem, data_envio) VALUES (?, ?, ?, ?)",
             (nome, email, mensagem, agora)
@@ -216,7 +203,6 @@ def contato():
         con.close()
         return redirect(url_for("contato"))
 
-    # GET: Busca todos os comentários para exibir na página
     comentarios = cur.execute(
         "SELECT nome, mensagem, data_envio FROM comentarios ORDER BY id DESC"
     ).fetchall()
@@ -248,7 +234,6 @@ def editar_produto(id):
         con.close()
         return redirect(url_for("listar_produtos"))
 
-    # GET: Busca os dados atuais do produto para preencher o formulário
     produto = cur.execute("SELECT * FROM produtos WHERE id = ?", (id,)).fetchone()
     con.close()
 
@@ -275,9 +260,11 @@ def apagar_produto(id):
     return redirect(url_for("listar_produtos"))
 
 # ---------------------------------------------------------
-# Inicialização do Servidor
+# Inicialização do Servidor (ÚNICO BLOCO)
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    # O Render define automaticamente uma porta nas variáveis de ambiente
+    # Garante que as tabelas sejam criadas ao iniciar
+    criar_tabelas()
+    
     porta = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=porta)
+    app.run(host="0.0.0.0", port=porta, debug=True)

@@ -1,86 +1,70 @@
 {% extends "base.html" %}
 
-{% block conteudo %}
-<style>
-    .login-container {
-        max-width: 400px;
-        margin: 4rem auto;
-        background-color: var(--fundo-branco);
-        padding: 2.5rem;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    .login-header h1 {
-        color: var(--azul-predominante);
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-    .form-group {
-        margin-bottom: 1.25rem;
-    }
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #4a5568;
-    }
-    .form-group input {
-        width: 100%;
-        padding: 0.65rem 0.75rem;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        box-sizing: border-box;
-    }
-    .form-group input:focus {
-        outline: none;
-        border-color: var(--azul-predominante);
-    }
-    .btn-login {
-        width: 100%;
-        background-color: var(--azul-predominante);
-        color: white;
-        padding: 0.75rem;
-        border: none;
-        border-radius: 6px;
-        font-weight: bold;
-        cursor: pointer;
-        font-size: 1rem;
-    }
-    .btn-login:hover {
-        background-color: #002266;
-    }
-    .caixa-erro {
-        background-color: #fff5f5;
-        color: var(--vermelho-venezuela);
-        border-left: 5px solid var(--vermelho-venezuela);
-        padding: 0.75rem;
-        border-radius: 4px;
-        margin-bottom: 1.25rem;
-        font-size: 0.95rem;
-    }
-</style>
+{% block title %}Login Administrativo{% endblock %}
 
-<div class="login-container">
-    <div class="login-header">
-        <h1>🔐 Área Restrita (ADM)</h1>
+{% block content %}
+<div class="page-wrapper" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 200px);">
+
+  <div class="card" style="width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+    
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div class="logo-icon" style="margin: 0 auto 15px; width: 50px; height: 50px; font-size: 24px;">🔑</div>
+      <h2 style="font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: -0.5px;">
+        Área do <span class="text-gold">Admin</span>
+      </h2>
+      <p class="text-muted" style="font-size: 0.8rem; margin-top: 5px;">Autenticação para gerenciamento da cantina</p>
     </div>
 
     {% if erro %}
-        <div class="caixa-erro">⚠️ {{ erro }}</div>
+    <div class="alert-box mb-3" style="padding: 10px 14px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span>❌</span>
+        <p style="font-weight: 600; font-size: 0.85rem;">{{ erro }}</p>
+      </div>
+    </div>
     {% endif %}
 
     <form action="{{ url_for('login') }}" method="POST">
-        <div class="form-group">
-            <label for="usuario">Usuário:</label>
-            <input type="text" id="usuario" name="usuario" required placeholder="Ex: admin">
-        </div>
-        <div class="form-group">
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha" required placeholder="••••••••">
-        </div>
-        <button type="submit" class="btn-login">Entrar no Sistema</button>
+      
+      <div class="form-group mb-3">
+        <label for="usuario" class="form-label">Usuário</label>
+        <input 
+          type="text" 
+          id="usuario" 
+          name="usuario" 
+          class="form-control" 
+          placeholder="Digite o usuário administrador" 
+          required 
+          autofocus
+          autocomplete="username"
+        />
+      </div>
+
+      <div class="form-group mb-4">
+        <label for="senha" class="form-label">Senha</label>
+        <input 
+          type="password" 
+          id="senha" 
+          name="senha" 
+          class="form-control" 
+          placeholder="••••••••••••" 
+          required
+          autocomplete="current-password"
+        />
+      </div>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-txt">ArepaPop Secure</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.9rem;">
+        Entrar no Sistema 🚀
+      </button>
+
     </form>
+  </div>
+
 </div>
 {% endblock %}

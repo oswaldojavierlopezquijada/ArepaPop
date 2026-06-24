@@ -1,81 +1,74 @@
 {% extends "base.html" %}
 
-{% block conteudo %}
-<style>
-    .ranking-header {
-        margin-bottom: 2rem;
-        border-bottom: 2px solid #eaedf1;
-        padding-bottom: 1rem;
-    }
+{% block title %}Ranking de Vendas{% endblock %}
 
-    .ranking-header h1 {
-        color: var(--azul-predominante);
-        font-size: 2rem;
-        margin: 0;
-    }
+{% block content %}
+<div class="page-wrapper">
 
-    .sem-vendas {
-        text-align: center;
-        padding: 3rem;
-        background-color: var(--fundo-cinza-claro);
-        border-radius: 8px;
-        border: 1px dashed #cbd5e1;
-        color: #64748b;
-        font-size: 1.1rem;
-        margin-top: 1.5rem;
-    }
-
-    .posicao {
-        font-weight: bold;
-        font-size: 1.1rem;
-        text-align: center;
-        width: 40px;
-    }
-    .ouro { color: #d4af37; }     
-    .prata { color: #aaa9ad; }    
-    .bronze { color: #cd7f32; }   
-    .comum { color: #64748b; }
-</style>
-
-<div class="ranking-header">
-    <h1>📊 Ranking de Vendas (Mais Vendidos)</h1>
-</div>
-
-{% if ranking %}
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 80px; text-align: center;">Posição</th>
-                <th>Produto</th>
-                <th>Quantidade Vendida</th>
-                <th>Total Arrecadado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in ranking %}
-                <tr>
-                    <td class="posicao">
-                        {% if loop.index == 1 %}
-                            <span class="ouro" title="1º Lugar">🥇 1º</span>
-                        {% elif loop.index == 2 %}
-                            <span class="prata" title="2º Lugar">🥈 2º</span>
-                        {% elif loop.index == 3 %}
-                            <span class="bronze" title="3º Lugar">🥉 3º</span>
-                        {% else %}
-                            <span class="comum">{{ loop.index }}º</span>
-                        {% endif %}
-                    </td>
-                    <td><strong>{{ item[0] }}</strong></td>
-                    <td>{{ item[1] }} un.</td>
-                    <td style="font-weight: bold; color: var(--verde-brasil);">R$ {{ "%.2f"|format(item[2]) }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <div class="sem-vendas">
-        <p>Ainda não há dados de vendas para gerar o ranking. Os produtos aparecerão aqui à medida que os pedidos forem registrados!</p>
+  <!-- Cabeçalho da Página -->
+  <div class="page-header">
+    <div>
+      <h2>📊 Ranking de Vendas</h2>
+      <p>Descubra quais são os produtos mais populares e lucrativos da ArepaPop.</p>
     </div>
-{% endif %}
+  </div>
 
+  <!-- Caso não existam vendas para gerar o ranking -->
+  {% if not ranking %}
+  <div class="card empty-state">
+    <span class="empty-icon">🏆</span>
+    <p>Ainda não há dados de vendas suficientes para gerar o ranking.</p>
+    <a href="/novo-pedido" class="btn btn-secondary mt-2" style="font-size: 0.8rem;">
+      Registrar um Pedido
+    </a>
+  </div>
+  {% else %}
+
+  <!-- Tabela de Ranking Estilo Glass Card -->
+  <div class="card table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 80px; text-align: center;">Posição</th>
+          <th>Produto</th>
+          <th>Qtd. Vendida</th>
+          <th>Total Arrecadado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rank in ranking %}
+        <tr>
+          <!-- Posição com medalhas para os 3 primeiros -->
+          <td style="text-align: center; font-weight: 700;">
+            {% if loop.index == 1 %}
+              <span style="font-size: 1.2rem;">🥇</span>
+            {% elif loop.index == 2 %}
+              <span style="font-size: 1.2rem;">🥈</span>
+            {% elif loop.index == 3 %}
+              <span style="font-size: 1.2rem;">🥉</span>
+            {% else %}
+              <span class="text-muted">#{{ loop.index }}</span>
+            {% endif %}
+          </td>
+          
+          <!-- Nome do Produto -->
+          <td><strong>{{ rank[0] }}</strong></td>
+          
+          <!-- Quantidade Total Vendida -->
+          <td>
+            <span class="badge badge-gold">{{ rank[1] }} un</span>
+          </td>
+          
+          <!-- Faturamento Total do Produto -->
+          <td class="text-green" style="font-weight: 600; font-size: 0.95rem;">
+            R$ {{ "%.2f"|format(rank[2]) }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
 {% endblock %}

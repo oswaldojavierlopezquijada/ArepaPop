@@ -1,142 +1,423 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArepaPop – Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-{% block conteudo %}
-<style>
-    /* Estilos específicos para o Dashboard */
-    .dashboard-header {
-        margin-bottom: 2.5rem;
-        border-bottom: 2px solid #eaedf1;
-        padding-bottom: 1rem;
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0A1628;
+      color: #E8F0FE;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .dashboard-header h1 {
-        color: var(--azul-predominante);
-        font-size: 2.2rem;
-        margin: 0;
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 0%,  rgba(192,57,43,0.22)  0%, transparent 55%),
+        radial-gradient(ellipse 55% 45% at 85% 90%, rgba(26,82,118,0.28)  0%, transparent 55%),
+        radial-gradient(ellipse 40% 35% at 70% 20%, rgba(39,174,96,0.13)  0%, transparent 50%);
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; opacity: 0.035;
+      background-image:
+        repeating-linear-gradient( 45deg,#fff 0,#fff 1px,transparent 1px,transparent 32px),
+        repeating-linear-gradient(-45deg,#fff 0,#fff 1px,transparent 1px,transparent 32px);
+      pointer-events: none;
     }
 
-    .dashboard-header p {
-        color: #6c757d;
-        margin-top: 0.5rem;
-        font-size: 1.1rem;
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(10,22,40,0.82);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+      font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.2rem;
+      color: #E8F0FE;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #C0392B, #F39C12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 18px rgba(192,57,43,0.5);
+    }
+    .logo-text span { color: #F39C12; }
+
+    .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem; font-weight: 600; padding: 7px 13px; border-radius: 8px;
+      color: rgba(200,220,240,0.65); text-decoration: none;
+      display: flex; align-items: center; gap: 5px;
+      transition: all 0.18s;
+    }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .nav-links .active a {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(192,57,43,0.38), rgba(243,156,18,0.18));
+      border: 1px solid rgba(192,57,43,0.38);
+    }
+    .nav-links .logout a { color: rgba(231,76,60,0.8); }
+    .nav-links .logout a:hover { background: rgba(231,76,60,0.15); color: #ff8070; }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      padding: 4rem 2rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .hero-text h1 {
+      font-family: 'Montserrat', sans-serif; font-weight: 900;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      line-height: 1.08; letter-spacing: -1px; margin-bottom: 12px;
+    }
+    .hero-text h1 .r  { color: #E74C3C; }
+    .hero-text h1 .g  { color: #2ECC71; }
+    .hero-text h1 .au { color: #F39C12; }
+    .hero-text p {
+      font-size: 0.92rem; color: rgba(180,210,240,0.7);
+      line-height: 1.65; max-width: 420px;
     }
 
-    /* Grid de Cards */
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 3rem;
+    .hero-flags { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+    .flag-frame {
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.45);
     }
 
-    .card-info {
-        background-color: var(--fundo-branco);
-        padding: 2rem;
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e2e8f0;
-        border-top: 5px solid var(--azul-predominante);
-        transition: transform 0.2s ease;
+    /* STATS */
+    .stats-grid {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 2rem auto 0;
+      padding: 0 2rem;
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+    }
+    .stat-card {
+      backdrop-filter: blur(16px);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px; padding: 22px 20px;
+      text-align: center; position: relative; overflow: hidden;
+      transition: transform 0.22s, box-shadow 0.22s; cursor: default;
+    }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: 0 18px 50px rgba(0,0,0,0.35); }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .stat-card.red::before   { background: linear-gradient(90deg,#C0392B,#F39C12); }
+    .stat-card.green::before { background: linear-gradient(90deg,#1E8449,#2ECC71); }
+    .stat-card.blue::before  { background: linear-gradient(90deg,#1A5276,#3498DB); }
+    .stat-card::after {
+      content: ''; position: absolute; top: -60%; left: -80%;
+      width: 50%; height: 220%;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.055) 50%, transparent 60%);
+      transform: skewX(-15deg); transition: left 0.5s; pointer-events: none;
+    }
+    .stat-card:hover::after { left: 130%; }
+
+    .stat-icon { font-size: 1.7rem; display: block; margin-bottom: 8px; }
+    .stat-value {
+      font-family: 'Montserrat', sans-serif; font-weight: 900;
+      font-size: 2.4rem; line-height: 1; margin-bottom: 5px;
+    }
+    .stat-card.red   .stat-value { color: #F39C12; }
+    .stat-card.green .stat-value { color: #2ECC71; }
+    .stat-card.blue  .stat-value { color: #5DADE2; }
+    .stat-label {
+      font-size: 0.69rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: rgba(180,210,240,0.5);
     }
 
-    .card-info:hover {
-        transform: translateY(-3px);
+    @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .stat-value { animation: fadeUp 0.6s ease both; }
+    .stat-card:nth-child(1) .stat-value { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) .stat-value { animation-delay: 0.25s; }
+    .stat-card:nth-child(3) .stat-value { animation-delay: 0.4s; }
+
+    /* SECTION */
+    .section {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 1.8rem auto 0; padding: 0 2rem;
+    }
+    .alert-box {
+      background: rgba(192,57,43,0.11);
+      border: 1px solid rgba(192,57,43,0.32);
+      border-radius: 16px; padding: 16px 20px;
+      display: flex; align-items: flex-start; gap: 14px;
+      margin-bottom: 2rem;
+    }
+    .alert-box .alert-ico { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .alert-box h3 {
+      font-family: 'Montserrat', sans-serif; font-weight: 700;
+      font-size: 0.88rem; color: #E74C3C; margin-bottom: 5px;
+    }
+    .alert-box ul { list-style: none; }
+    .alert-box li { font-size: 0.84rem; color: rgba(200,210,220,0.75); }
+    .badge-stock {
+      display: inline-block; background: #C0392B; color: #fff;
+      font-size: 0.71rem; font-weight: 700; padding: 2px 10px;
+      border-radius: 20px; margin-left: 6px;
     }
 
-    .card-info h2 {
-        font-size: 2.5rem;
-        color: var(--texto-escuro);
-        margin-bottom: 0.5rem;
+    .divider {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 1.4rem; opacity: 0.45;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.12); }
+    .divider-txt {
+      font-size: 0.65rem; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(200,220,240,0.6);
     }
 
-    .card-info p {
-        color: #4a5568;
-        font-weight: 600;
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .actions-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+      margin-bottom: 2.5rem;
     }
-
-    /* Seção de Alertas de Estoque Baixo */
-    .secao-alerta {
-        background-color: #fffaf0;
-        border-left: 5px solid var(--amarelo-uniao);
-        padding: 1.5rem;
-        border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    .action-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 14px; padding: 16px;
+      text-decoration: none; color: inherit;
+      display: flex; align-items: center; gap: 13px;
+      transition: all 0.22s;
     }
-
-    .secao-alerta h3 {
-        color: #dd6b20;
-        margin-bottom: 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+    .action-card:hover {
+      border-color: rgba(243,156,18,0.45);
+      background: rgba(243,156,18,0.07);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.22);
     }
+    .action-emoji { font-size: 1.55rem; flex-shrink: 0; }
+    .action-title { font-weight: 600; font-size: 0.85rem; }
+    .action-sub   { font-size: 0.73rem; color: rgba(180,210,240,0.5); margin-top: 2px; }
 
-    .lista-alertas {
-        list-style-type: none;
-        padding: 0;
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 1.2rem 2rem;
     }
-
-    .lista-alertas li {
-        padding: 0.5rem 0;
-        color: #7b341e;
-        font-weight: 500;
-        border-bottom: 1px dashed #feebc8;
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
     }
+    footer p { font-size: 0.75rem; color: rgba(180,210,240,0.38); }
 
-    .lista-alertas li:last-child {
-        border-bottom: none;
+    @media (max-width: 768px) {
+      .stats-grid, .actions-grid { grid-template-columns: 1fr; }
+      .hero-flags { display: none; }
+      .nav-links  { display: none; }
     }
+  </style>
+</head>
+<body>
 
-    .badge-aviso {
-        background-color: var(--vermelho-venezuela);
-        color: white;
-        padding: 0.2rem 0.6rem;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        margin-left: 0.5rem;
-    }
-</style>
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">🫓</div>
+      <span class="logo-text">Arepa<span>Pop</span></span>
+    </a>
+    <ul class="nav-links">
+      <li class="active"><a href="/">🏠 Início</a></li>
+      <li><a href="/produtos">🛒 Produtos</a></li>
+      <li><a href="/novo-pedido">➕ Novo Pedido</a></li>
+      <li><a href="/pedidos">📋 Pedidos</a></li>
+      <li><a href="/ranking">📊 Ranking</a></li>
+      <li><a href="/contato">💬 Contato</a></li>
+      <li class="logout"><a href="/logout">✕ Sair</a></li>
+    </ul>
+  </div>
+</nav>
 
-<div class="dashboard-header">
-    <h1>🍔 Cantina Digital</h1>
-    <p>Painel de Controle Geral da Cantina Escolar</p>
+<div class="hero">
+  <div class="hero-text">
+    <h1>
+      <span class="au">Sabor</span> <span class="r">Venezo</span><span class="g">lano</span><br>
+      no coração do <span class="r">Brasil</span>
+    </h1>
+    <p>Gerencie produtos, pedidos e receita em tempo real — com o charme de Caracas e o calor de Brasília.</p>
+  </div>
+
+  <div class="hero-flags">
+
+    <!-- Venezuela: 3 faixas + 8 estrelas em arco correto -->
+    <div class="flag-frame">
+      <svg width="96" height="64" viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="96" height="21.3" fill="#CF142B"/>
+        <rect y="21.3" width="96" height="21.3" fill="#00247D"/>
+        <rect y="42.6" width="96" height="21.4" fill="#CF9A00"/>
+        <!-- 8 estrelas em arco: centro (48,32), raio 11, de 157.5° a 22.5° espaçadas 19.3° -->
+        <g fill="white">
+          <polygon points="0,-2.2 0.65,-0.68 2.3,-0.68 1.0,0.26 1.47,1.82 0,0.88 -1.47,1.82 -1.0,0.26 -2.3,-0.68 -0.65,-0.68" transform="translate(37.2,26.8) scale(2.4)"/>
+          <polygon points="0,-2.2 0.65,-0.68 2.3,-0.68 1.0,0.26 1.47,1.82 0,0.88 -1.47,1.82 -1.0,0.26 -2.3,-0.68 -0.65,-0.68" transform="translate(40.0,22.9) scale(2.4)"/>
+          <polygon points="0,-2.2 0.65,-0.68 2.3,-0.68 1.0,0.26 1.47,1.82 0,0.88 -1.47,1.82 -1.0,0.26 -2.3,-0.68 -0.65,-0.68" transform="translate(44.0,20.9) scale(2.4)"/>
+          <polygon points="0,-2.2 0.65,-0.68 2.3,-0.68 1.0,0.26 1.47,1.82 0,0.88 -1.47,1.82 -1.0,0.26 -2.3,-0.68 -0.65,-0.68" transform="translate(48.0,20.2) scale(2.4)"/>
+          <polygon points="0,-2.2 0.65,-0.68 2.3,-0.68 1.0,0.26 1.47,1.82 0,0.88 -1.47,1.82 -1.0,0.26 -2.3,-0.68 -0.65,-0.68" transform="translate(52.0,20.9) scale(2.4)"/>
+          <polygon points="0,-2.2 0.65,-0.68 2.3,-0.68 1.0,0.26 1.47,1.82 0,0.88 -1.47,1.82 -1.0,0.26 -2.3,-0.68 -0.65,-0.68" transform="translate(56.0,22.9) scale(2.4)"/>
+          <polygon points="0,-2.2 0.65,-0.68 2.3,-0.68 1.0,0.26 1.47,1.82 0,0.88 -1.47,1.82 -1.0,0.26 -2.3,-0.68 -0.65,-0.68" transform="translate(58.8,26.8) scale(2.4)"/>
+          <polygon points="0,-2.2 0.65,-0.68 2.3,-0.68 1.0,0.26 1.47,1.82 0,0.88 -1.47,1.82 -1.0,0.26 -2.3,-0.68 -0.65,-0.68" transform="translate(58.8,31.5) scale(2.4)"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Arepa -->
+    <svg width="58" height="58" viewBox="0 0 58 58">
+      <ellipse cx="29" cy="34" rx="23" ry="9"  fill="#7B3F10" opacity="0.85"/>
+      <ellipse cx="29" cy="31" rx="23" ry="9"  fill="#C47A3A"/>
+      <ellipse cx="29" cy="29" rx="20" ry="7.5" fill="#D49060"/>
+      <ellipse cx="29" cy="28" rx="16" ry="5.5" fill="#E8B080" opacity="0.85"/>
+      <ellipse cx="29" cy="27" rx="10" ry="3.2" fill="#F5C898" opacity="0.55"/>
+    </svg>
+
+    <!-- Brasil: losango amarelo, círculo azul, arco branco e estrelas — sem texto -->
+    <div class="flag-frame">
+      <svg width="96" height="64" viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="96" height="64" fill="#009C3B"/>
+        <polygon points="48,6 88,32 48,58 8,32" fill="#FEDF00"/>
+        <circle cx="48" cy="32" r="14.5" fill="#002776"/>
+        <!-- arco branco (faixa "Ordem e Progresso") -->
+        <path d="M34.5 29 Q48 25.5 61.5 29" stroke="white" stroke-width="1.4" fill="none"/>
+        <!-- estrelas: posições aproximadas da bandeira real -->
+        <g fill="white">
+          <!-- Crux Australis (Cruzeiro do Sul) -->
+          <circle cx="40.5" cy="35.5" r="1.2"/>
+          <circle cx="43.5" cy="39.0" r="1.0"/>
+          <circle cx="43.5" cy="32.0" r="1.0"/>
+          <circle cx="46.5" cy="35.5" r="1.2"/>
+          <circle cx="43.5" cy="35.5" r="0.75"/>
+          <!-- outras constelações representativas -->
+          <circle cx="51.0" cy="28.5" r="0.9"/>
+          <circle cx="54.5" cy="27.0" r="0.9"/>
+          <circle cx="56.5" cy="31.0" r="0.85"/>
+          <circle cx="53.5" cy="33.0" r="0.85"/>
+          <circle cx="37.0" cy="29.5" r="0.85"/>
+          <circle cx="45.5" cy="26.0" r="0.8"/>
+          <circle cx="57.0" cy="36.0" r="0.8"/>
+          <circle cx="35.5" cy="36.5" r="0.75"/>
+        </g>
+      </svg>
+    </div>
+
+  </div>
 </div>
 
-<div class="cards-grid">
-    <div class="card-info">
-        <h2>{{ total_produtos }}</h2>
-        <p>Produtos Cadastrados</p>
-    </div>
-    
-    <div class="card-info">
-        <h2>{{ total_pedidos }}</h2>
-        <p>Pedidos Realizados</p>
-    </div>
-    
-    <div class="card-info" style="border-top-color: var(--verde-brasil);">
-        <h2>R$ {{ "%.2f"|format(receita) }}</h2>
-        <p>Receita Total</p>
-    </div>
+<div class="stats-grid">
+  <div class="stat-card red">
+    <span class="stat-icon">🫓</span>
+    <div class="stat-value" id="sv-prod">{{ total_produtos }}</div>
+    <div class="stat-label">Produtos Cadastrados</div>
+  </div>
+  <div class="stat-card green">
+    <span class="stat-icon">🧾</span>
+    <div class="stat-value" id="sv-ped">{{ total_pedidos }}</div>
+    <div class="stat-label">Pedidos Realizados</div>
+  </div>
+  <div class="stat-card blue">
+    <span class="stat-icon">💰</span>
+    <div class="stat-value">R$ {{ "%.2f"|format(receita) }}</div>
+    <div class="stat-label">Receita Total</div>
+  </div>
 </div>
 
-{% if alertas %}
-    <div class="secao-alerta">
-        <h3>⚠️ Alerta de Estoque Baixo</h3>
-        <p style="color: #7b341e; margin-bottom: 1rem;">Os seguintes itens precisam de reposição urgente:</p>
-        <ul class="lista-alertas">
-            {% for a in alertas %}
-                <li>
-                    • <strong>{{ a[0] }}</strong> atualmente possui apenas 
-                    <span class="badge-aviso">{{ a[1] }} unidades</span> no estoque.
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
+<div class="section">
 
-{% endblock %}
+  {% if alertas %}
+  <div class="alert-box" style="margin-top:1.5rem;">
+    <div class="alert-ico">⚠️</div>
+    <div>
+      <h3>Alerta de Estoque Baixo</h3>
+      <ul>
+        {% for item in alertas %}
+        <li>
+          <strong>{{ item[0] }}</strong> — apenas
+          <span class="badge-stock">{{ item[1] }} unidades</span> restantes
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="divider" style="margin-top:2rem;">
+    <div class="divider-line"></div>
+    <span class="divider-txt">🌿 acesso rápido 🌿</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="actions-grid">
+    <a href="/produtos" class="action-card">
+      <span class="action-emoji">🛒</span>
+      <div><div class="action-title">Produtos</div><div class="action-sub">Ver catálogo completo</div></div>
+    </a>
+    <a href="/novo-pedido" class="action-card">
+      <span class="action-emoji">➕</span>
+      <div><div class="action-title">Novo Pedido</div><div class="action-sub">Registrar venda</div></div>
+    </a>
+    <a href="/pedidos" class="action-card">
+      <span class="action-emoji">📋</span>
+      <div><div class="action-title">Histórico</div><div class="action-sub">Todos os pedidos</div></div>
+    </a>
+    <a href="/ranking" class="action-card">
+      <span class="action-emoji">📊</span>
+      <div><div class="action-title">Ranking</div><div class="action-sub">Mais vendidos</div></div>
+    </a>
+    <a href="/contato" class="action-card">
+      <span class="action-emoji">💬</span>
+      <div><div class="action-title">Contato</div><div class="action-sub">Comentários</div></div>
+    </a>
+    <a href="/cadastrar-produto" class="action-card">
+      <span class="action-emoji">✏️</span>
+      <div><div class="action-title">Cadastrar</div><div class="action-sub">Novo produto</div></div>
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span style="font-size:0.78rem;color:rgba(180,210,240,0.4);">🇻🇪 × 🇧🇷 &nbsp;Sabor que atravessa fronteiras</span>
+    <p>© 2026 – ArepaPop — Grupo 2 · QualificaDF</p>
+  </div>
+</footer>
+
+<script>
+  function countUp(el, target, duration) {
+    if (!el || isNaN(target) || target === 0) return;
+    let start = 0;
+    const step = target / (duration / 16);
+    const raf = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = Math.floor(start);
+      if (start >= target) clearInterval(raf);
+    }, 16);
+  }
+  window.addEventListener('DOMContentLoaded', () => {
+    const elProd = document.getElementById('sv-prod');
+    const elPed  = document.getElementById('sv-ped');
+    if (elProd) countUp(elProd, parseInt(elProd.textContent) || 0, 900);
+    if (elPed)  countUp(elPed,  parseInt(elPed.textContent)  || 0, 1100);
+  });
+</script>
+
+</body>
+</html>
