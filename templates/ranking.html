@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    .ranking-header {
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #eaedf1;
+        padding-bottom: 1rem;
+    }
+
+    .ranking-header h1 {
+        color: var(--azul-predominante);
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    .sem-vendas {
+        text-align: center;
+        padding: 3rem;
+        background-color: var(--fundo-cinza-claro);
+        border-radius: 8px;
+        border: 1px dashed #cbd5e1;
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+    }
+
+    .posicao {
+        font-weight: bold;
+        font-size: 1.1rem;
+        text-align: center;
+        width: 40px;
+    }
+    .ouro { color: #d4af37; }     
+    .prata { color: #aaa9ad; }    
+    .bronze { color: #cd7f32; }   
+    .comum { color: #64748b; }
+</style>
+
+<div class="ranking-header">
+    <h1>📊 Ranking de Vendas (Mais Vendidos)</h1>
+</div>
+
+{% if ranking %}
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 80px; text-align: center;">Posição</th>
+                <th>Produto</th>
+                <th>Quantidade Vendida</th>
+                <th>Total Arrecadado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ranking %}
+                <tr>
+                    <td class="posicao">
+                        {% if loop.index == 1 %}
+                            <span class="ouro" title="1º Lugar">🥇 1º</span>
+                        {% elif loop.index == 2 %}
+                            <span class="prata" title="2º Lugar">🥈 2º</span>
+                        {% elif loop.index == 3 %}
+                            <span class="bronze" title="3º Lugar">🥉 3º</span>
+                        {% else %}
+                            <span class="comum">{{ loop.index }}º</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ item[0] }}</strong></td>
+                    <td>{{ item[1] }} un.</td>
+                    <td style="font-weight: bold; color: var(--verde-brasil);">R$ {{ "%.2f"|format(item[2]) }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="sem-vendas">
+        <p>Ainda não há dados de vendas para gerar o ranking. Os produtos aparecerão aqui à medida que os pedidos forem registrados!</p>
+    </div>
+{% endif %}
+
+{% endblock %}

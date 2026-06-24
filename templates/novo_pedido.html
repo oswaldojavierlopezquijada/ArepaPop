@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* Estilos específicos para a página de Novo Pedido */
+    .pedido-header {
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #eaedf1;
+        padding-bottom: 1rem;
+    }
+
+    .pedido-header h1 {
+        color: var(--azul-predominante);
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    .pedido-container {
+        max-width: 550px;
+        background-color: var(--fundo-branco);
+        padding: 2.5rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .pedido-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .pedido-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.95rem;
+    }
+
+    .pedido-group select, .pedido-group input {
+        width: 100%;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 1rem;
+        color: var(--texto-escuro);
+        background-color: #f8fafc;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .pedido-group select:focus, .pedido-group input:focus {
+        outline: none;
+        border-color: var(--azul-predominante);
+        background-color: var(--fundo-branco);
+        box-shadow: 0 0 0 3px rgba(0, 51, 160, 0.15);
+    }
+
+    .pedido-actions {
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    /* Botão Confirmar usando o azul predominante */
+    .btn-confirmar {
+        background-color: var(--azul-predominante);
+        color: var(--fundo-branco);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+        flex: 2;
+    }
+
+    .btn-confirmar:hover {
+        background-color: #002266;
+        border-bottom: 3px solid var(--verde-brasil); /* Detalhe verde no hover */
+    }
+
+    .btn-cancelar {
+        background-color: #e2e8f0;
+        color: #475569;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1rem;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        flex: 1;
+    }
+
+    .btn-cancelar:hover {
+        background-color: #cbd5e1;
+        color: #1e293b;
+    }
+
+    /* Caixa de Erro Dinâmica (Estoque Insuficiente) */
+    .caixa-erro {
+        background-color: #fff5f5;
+        color: var(--vermelho-venezuela);
+        border: 1px solid #fed7d7;
+        border-left: 5px solid var(--vermelho-venezuela);
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+</style>
+
+<div class="pedido-header">
+    <h1>🛒 Registrar Novo Pedido</h1>
+</div>
+
+<div class="pedido-container">
+    
+    {% if erro %}
+        <div class="caixa-erro">
+            ⚠️ {{ erro }}
+        </div>
+    {% endif %}
+
+    <form action="{{ url_for('novo_pedido') }}" method="POST">
+        
+        <div class="pedido-group">
+            <label for="produto_id">Selecione o Produto:</label>
+            <select id="produto_id" name="produto_id" required>
+                <option value="" disabled selected>-- Escolha um item da lista --</option>
+                {% for p in produtos %}
+                    <option value="{{ p[0] }}">{{ p[1] }} (Disponível: {{ p[2] }} un.)</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="pedido-group">
+            <label for="quantidade">Quantidade:</label>
+            <input type="number" id="quantidade" name="quantidade" min="1" value="1" required>
+        </div>
+
+        <div class="pedido-actions">
+            <a href="{{ url_for('listar_pedidos') }}" class="btn-cancelar">Cancelar</a>
+            <button type="submit" class="btn-confirmar">Finalizar Pedido</button>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

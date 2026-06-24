@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* Estilos específicos para a página de Produtos */
+    .produtos-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #eaedf1;
+        padding-bottom: 1rem;
+    }
+
+    .produtos-header h1 {
+        color: var(--azul-predominante);
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    /* Botão estilizado com o azul predominante e detalhe verde no hover */
+    .btn-cadastrar {
+        background-color: var(--azul-predominante);
+        color: var(--fundo-branco);
+        padding: 0.7rem 1.4rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-cadastrar:hover {
+        background-color: #002266;
+        border-bottom: 3px solid var(--verde-brasil);
+    }
+
+    .sem-produtos {
+        text-align: center;
+        padding: 3rem;
+        background-color: var(--fundo-cinza-claro);
+        border-radius: 8px;
+        border: 1px dashed #cbd5e1;
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+    }
+</style>
+
+<div class="produtos-header">
+    <h1>🛒 Almoxarifado de Produtos</h1>
+    <a href="{{ url_for('cadastrar_produto') }}" class="btn-cadastrar">➕ Cadastrar Produto</a>
+</div>
+
+{% if produtos %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome do Produto</th>
+                <th>Preço Unitário</th>
+                <th>Estoque Atual</th>
+                <th>Status do Inventário</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in produtos %}
+                <tr>
+                    <td style="color: #64748b; font-weight: bold;">#{{ p[0] }}</td>
+                    <td><strong>{{ p[1] }}</strong></td>
+                    <td>R$ {{ "%.2f"|format(p[2]) }}</td>
+                    <td>{{ p[3] }} un.</td>
+                    <td>
+                        {% if p[3] == 0 %}
+                            <span class="badge vermelho">Sem estoque</span>
+                        {% elif p[3] < 5 %}
+                            <span class="badge amarelo">Estoque baixo</span>
+                        {% else %}
+                            <span class="badge verde">Disponível (OK)</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="sem-produtos">
+        <p>Nenhum produto foi cadastrado até o momento. Clique em <strong>Cadastrar Produto</strong> para abastecer a cantina!</p>
+    </div>
+{% endif %}
+
+{% endblock %}

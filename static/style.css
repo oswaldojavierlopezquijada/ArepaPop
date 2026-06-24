@@ -1,0 +1,57 @@
+/* Ajustes Globais */
+:root {
+    --azul-predominante: #0033a0;
+    --verde-brasil: #009b3a;
+    --amarelo-uniao: #fecb00;
+    --vermelho-venezuela: #cf142b;
+    --fundo-branco: #ffffff;
+    --fundo-cinza-claro: #f8f9fa;
+    --texto-escuro: #212529;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--fundo-branco);
+    color: var(--texto-escuro);
+}
+
+/* Tabelas (Para as páginas de produtos e pedidos) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--fundo-branco);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #dee2e6;
+}
+
+th {
+    background-color: var(--azul-predominante);
+    color: white;
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Badges de Status */
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+.badge.verde { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.badge.amarelo { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.badge.vermelho { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }

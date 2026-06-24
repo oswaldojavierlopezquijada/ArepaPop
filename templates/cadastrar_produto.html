@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* Estilos específicos para a página de Cadastro */
+    .form-header {
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #eaedf1;
+        padding-bottom: 1rem;
+    }
+
+    .form-header h1 {
+        color: var(--azul-predominante);
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    .form-container {
+        max-width: 550px;
+        background-color: var(--fundo-branco);
+        padding: 2.5rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.95rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 1rem;
+        color: var(--texto-escuro);
+        background-color: #f8fafc;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    /* Foco no input usando o azul predominante */
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--azul-predominante);
+        background-color: var(--fundo-branco);
+        box-shadow: 0 0 0 3px rgba(0, 51, 160, 0.15);
+    }
+
+    .form-actions {
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    /* Botão de Salvar */
+    .btn-salvar {
+        background-color: var(--azul-predominante);
+        color: var(--fundo-branco);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+        flex: 2;
+    }
+
+    .btn-salvar:hover {
+        background-color: #002266;
+        border-bottom: 3px solid var(--verde-brasil); /* Detalhe verde de Brasil no hover */
+    }
+
+    /* Botão de Cancelar / Voltar */
+    .btn-voltar {
+        background-color: #e2e8f0;
+        color: #475569;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1rem;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        flex: 1;
+    }
+
+    .btn-voltar:hover {
+        background-color: #cbd5e1;
+        color: #1e293b;
+    }
+</style>
+
+<div class="form-header">
+    <h1>📦 Cadastrar Novo Produto</h1>
+</div>
+
+<div class="form-container">
+    <form action="{{ url_for('cadastrar_produto') }}" method="POST">
+        
+        <div class="form-group">
+            <label for="nome">Nome do Produto:</label>
+            <input type="text" id="nome" name="nome" placeholder="Ex: Arepa de Carne Mechada, Suco..." required>
+        </div>
+
+        <div class="form-group">
+            <label for="preco">Preço de Venda (R$):</label>
+            <input type="number" id="preco" name="preco" step="0.01" min="0.01" placeholder="0.00" required>
+        </div>
+
+        <div class="form-group">
+            <label for="estoque">Estoque Inicial (Unidades):</label>
+            <input type="number" id="estoque" name="estoque" min="0" placeholder="0" required>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('listar_produtos') }}" class="btn-voltar">Cancelar</a>
+            <button type="submit" class="btn-salvar">Salvar Produto</button>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

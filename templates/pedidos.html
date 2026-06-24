@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* Estilos específicos para a página de Histórico de Pedidos */
+    .pedidos-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #eaedf1;
+        padding-bottom: 1rem;
+    }
+
+    .pedidos-header h1 {
+        color: var(--azul-predominante);
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    /* Botão estilizado com o azul predominante e detalhe verde no hover */
+    .btn-novo-pedido {
+        background-color: var(--azul-predominante);
+        color: var(--fundo-branco);
+        padding: 0.7rem 1.4rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-novo-pedido:hover {
+        background-color: #002266;
+        border-bottom: 3px solid var(--verde-brasil);
+    }
+
+    .sem-pedidos {
+        text-align: center;
+        padding: 3rem;
+        background-color: var(--fundo-cinza-claro);
+        border-radius: 8px;
+        border: 1px dashed #cbd5e1;
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+    }
+
+    /* Destaque para o ID do pedido */
+    .pedido-id {
+        font-weight: bold;
+        color: #64748b;
+    }
+
+    /* Destaque para o valor total (usando o verde da bandeira para simbolizar receita) */
+    .valor-total {
+        font-weight: bold;
+        color: var(--verde-brasil);
+    }
+</style>
+
+<div class="pedidos-header">
+    <h1>📋 Histórico de Pedidos</h1>
+    <a href="{{ url_for('novo_pedido') }}" class="btn-novo-pedido">➕ Registrar Pedido</a>
+</div>
+
+{% if pedidos %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Total do Pedido</th>
+                <th>Data & Hora</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ped in pedidos %}
+                <tr>
+                    <td class="pedido-id">#{{ ped[0] }}</td>
+                    <td><strong>{{ ped[1] }}</strong></td>
+                    <td>{{ ped[2] }} un.</td>
+                    <td class="valor-total">R$ {{ "%.2f"|format(ped[3]) }}</td>
+                    <td style="color: #475569;">{{ ped[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="sem-pedidos">
+        <p>Nenhum pedido foi registrado até o momento. Clique em <strong>Registrar Pedido</strong> para começar!</p>
+    </div>
+{% endif %}
+
+{% endblock %}

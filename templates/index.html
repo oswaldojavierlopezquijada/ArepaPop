@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<style>
+    /* Estilos específicos para o Dashboard */
+    .dashboard-header {
+        margin-bottom: 2.5rem;
+        border-bottom: 2px solid #eaedf1;
+        padding-bottom: 1rem;
+    }
+
+    .dashboard-header h1 {
+        color: var(--azul-predominante);
+        font-size: 2.2rem;
+        margin: 0;
+    }
+
+    .dashboard-header p {
+        color: #6c757d;
+        margin-top: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    /* Grid de Cards */
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .card-info {
+        background-color: var(--fundo-branco);
+        padding: 2rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        border-top: 5px solid var(--azul-predominante);
+        transition: transform 0.2s ease;
+    }
+
+    .card-info:hover {
+        transform: translateY(-3px);
+    }
+
+    .card-info h2 {
+        font-size: 2.5rem;
+        color: var(--texto-escuro);
+        margin-bottom: 0.5rem;
+    }
+
+    .card-info p {
+        color: #4a5568;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Seção de Alertas de Estoque Baixo */
+    .secao-alerta {
+        background-color: #fffaf0;
+        border-left: 5px solid var(--amarelo-uniao);
+        padding: 1.5rem;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .secao-alerta h3 {
+        color: #dd6b20;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .lista-alertas {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .lista-alertas li {
+        padding: 0.5rem 0;
+        color: #7b341e;
+        font-weight: 500;
+        border-bottom: 1px dashed #feebc8;
+    }
+
+    .lista-alertas li:last-child {
+        border-bottom: none;
+    }
+
+    .badge-aviso {
+        background-color: var(--vermelho-venezuela);
+        color: white;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        margin-left: 0.5rem;
+    }
+</style>
+
+<div class="dashboard-header">
+    <h1>🍔 Cantina Digital</h1>
+    <p>Painel de Controle Geral da Cantina Escolar</p>
+</div>
+
+<div class="cards-grid">
+    <div class="card-info">
+        <h2>{{ total_produtos }}</h2>
+        <p>Produtos Cadastrados</p>
+    </div>
+    
+    <div class="card-info">
+        <h2>{{ total_pedidos }}</h2>
+        <p>Pedidos Realizados</p>
+    </div>
+    
+    <div class="card-info" style="border-top-color: var(--verde-brasil);">
+        <h2>R$ {{ "%.2f"|format(receita) }}</h2>
+        <p>Receita Total</p>
+    </div>
+</div>
+
+{% if alertas %}
+    <div class="secao-alerta">
+        <h3>⚠️ Alerta de Estoque Baixo</h3>
+        <p style="color: #7b341e; margin-bottom: 1rem;">Os seguintes itens precisam de reposição urgente:</p>
+        <ul class="lista-alertas">
+            {% for a in alertas %}
+                <li>
+                    • <strong>{{ a[0] }}</strong> atualmente possui apenas 
+                    <span class="badge-aviso">{{ a[1] }} unidades</span> no estoque.
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% endblock %}
