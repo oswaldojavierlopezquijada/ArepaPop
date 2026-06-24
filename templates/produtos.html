@@ -47,11 +47,44 @@
         font-size: 1.1rem;
         margin-top: 1.5rem;
     }
+
+    /* Botões de Ação do ADM */
+    .btn-editar {
+        background-color: #3182ce; 
+        color: white; 
+        padding: 0.4rem 0.8rem; 
+        text-decoration: none; 
+        border-radius: 4px; 
+        font-size: 0.85rem; 
+        font-weight: bold;
+        transition: background-color 0.2s;
+    }
+    .btn-editar:hover {
+        background-color: #2b6cb0;
+    }
+
+    .btn-apagar {
+        background-color: var(--vermelho-venezuela); 
+        color: white; 
+        padding: 0.4rem 0.8rem; 
+        border: none; 
+        border-radius: 4px; 
+        font-size: 0.85rem; 
+        font-weight: bold; 
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .btn-apagar:hover {
+        opacity: 0.9;
+    }
 </style>
 
 <div class="produtos-header">
     <h1>🛒 Almoxarifado de Produtos</h1>
-    <a href="{{ url_for('cadastrar_produto') }}" class="btn-cadastrar">➕ Cadastrar Produto</a>
+    {# O botão de cadastrar só aparece para o Administrador conectado #}
+    {% if session.get('admin') %}
+        <a href="{{ url_for('cadastrar_produto') }}" class="btn-cadastrar">➕ Cadastrar Produto</a>
+    {% endif %}
 </div>
 
 {% if produtos %}
@@ -63,6 +96,10 @@
                 <th>Preço Unitário</th>
                 <th>Estoque Atual</th>
                 <th>Status do Inventário</th>
+                {# Coluna de ações protegida #}
+                {% if session.get('admin') %}
+                    <th style="text-align: center;">Ações</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -81,13 +118,23 @@
                             <span class="badge verde">Disponível (OK)</span>
                         {% endif %}
                     </td>
+                    {# Botões de Editar e Apagar aparecem dinamicamente aqui #}
+                    {% if session.get('admin') %}
+                        <td style="display: flex; gap: 0.5rem; justify-content: center; align-items: center;">
+                            <a href="{{ url_for('editar_produto', id=p[0]) }}" class="btn-editar">✏️ Editar</a>
+                            
+                            <form action="{{ url_for('apagar_produto', id=p[0]) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja apagar o produto {{ p[1] }}?');" style="margin: 0; display: inline;">
+                                <button type="submit" class="btn-apagar">🗑️ Apagar</button>
+                            </form>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 {% else %}
     <div class="sem-produtos">
-        <p>Nenhum produto foi cadastrado até o momento. Clique em <strong>Cadastrar Produto</strong> para abastecer a cantina!</p>
+        <p>Nenhum produto foi cadastrado até o momento. {% if session.get('admin') %}Clique em <strong>Cadastrar Produto</strong> para abastecer a cantina!{% else %}Por favor, aguarde o administrador abastecer a cantina. 😊{% endif %}</p>
     </div>
 {% endif %}
 

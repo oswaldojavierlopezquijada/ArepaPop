@@ -46,6 +46,11 @@
             text-decoration: none;
         }
 
+        nav .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
         nav .nav-links a {
             color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
@@ -132,6 +137,13 @@
             <a href="{{ url_for('novo_pedido') }}">➕ Novo Pedido</a>
             <a href="{{ url_for('listar_pedidos') }}">📋 Pedidos</a>
             <a href="{{ url_for('ranking') }}">📊 Ranking</a>
+            <a href="{{ url_for('contato') }}">💬 Contato</a>
+            
+            {% if session.get('admin') %}
+                <a href="{{ url_for('logout') }}" style="color: #ff4d4d; font-weight: bold;">❌ Sair (ADM)</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" style="color: #4ade80; font-weight: bold;">🔐 Entrar</a>
+            {% endif %}
         </div>
     </nav>
 

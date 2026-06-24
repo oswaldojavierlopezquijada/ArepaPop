@@ -131,6 +131,7 @@ def novo_pedido():
                 produtos=produtos_disponiveis
             )
 
+        # CORREÇÃO AQUI (Linha 134 limpa):
         total = preco * quantidade
         agora = datetime.now().strftime("%d/%m/%Y %H:%M")
 
@@ -191,6 +192,87 @@ def ranking():
     """).fetchall()
     con.close()
     return render_template("ranking.html", ranking=ranking_vendas)
+
+# ---------------------------------------------------------
+# PASSO 7 — Contato e Comentários
+# ---------------------------------------------------------
+@app.route("/contato", methods=["GET", "POST"])
+def contato():
+    con = conectar()
+    cur = con.cursor()
+
+    if request.method == "POST":
+        nome = request.form["nome"]
+        email = request.form["email"]
+        mensagem = request.form["mensagem"]
+        agora = datetime.now().strftime("%d/%m/%Y %H:%M")
+
+        # Insere o comentário no banco de dados
+        cur.execute(
+            "INSERT INTO comentarios (nome, email, mensagem, data_envio) VALUES (?, ?, ?, ?)",
+            (nome, email, mensagem, agora)
+        )
+        con.commit()
+        con.close()
+        return redirect(url_for("contato"))
+
+    # GET: Busca todos os comentários para exibir na página
+    comentarios = cur.execute(
+        "SELECT nome, mensagem, data_envio FROM comentarios ORDER BY id DESC"
+    ).fetchall()
+    con.close()
+    
+    return render_template("contacto.html", comentarios=comentarios)
+
+# ---------------------------------------------------------
+# PASSO 8 — Editar Produto (PROTEGIDO)
+# ---------------------------------------------------------
+@app.route("/editar-produto/<int:id>", methods=["GET", "POST"])
+def editar_produto(id):
+    if not session.get("admin"):
+        return redirect(url_for('login'))
+
+    con = conectar()
+    cur = con.cursor()
+
+    if request.method == "POST":
+        nome = request.form["nome"]
+        preco = float(request.form["preco"])
+        estoque = int(request.form["estoque"])
+
+        cur.execute(
+            "UPDATE produtos SET nome = ?, preco = ?, estoque = ? WHERE id = ?",
+            (nome, preco, estoque, id)
+        )
+        con.commit()
+        con.close()
+        return redirect(url_for("listar_produtos"))
+
+    # GET: Busca os dados atuais do produto para preencher o formulário
+    produto = cur.execute("SELECT * FROM produtos WHERE id = ?", (id,)).fetchone()
+    con.close()
+
+    if not produto:
+        return "Produto não encontrado", 404
+
+    return render_template("editar_produto.html", produto=produto)
+
+# ---------------------------------------------------------
+# PASSO 9 — Apagar Produto (PROTEGIDO)
+# ---------------------------------------------------------
+@app.route("/apagar-produto/<int:id>", methods=["POST"])
+def apagar_produto(id):
+    if not session.get("admin"):
+        return redirect(url_for('login'))
+
+    con = conectar()
+    cur = con.cursor()
+    
+    cur.execute("DELETE FROM produtos WHERE id = ?", (id,))
+    con.commit()
+    con.close()
+    
+    return redirect(url_for("listar_produtos"))
 
 # ---------------------------------------------------------
 # Inicialização do Servidor
